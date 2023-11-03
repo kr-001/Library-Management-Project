@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Navbar from './Navbar';
 import BeatLoader from "react-spinners/BeatLoader";
 import '../../css/StudentDashboad.css'
 import LoadingBar from 'react-top-loading-bar';
-
+import favicon from '../ico/favicon.ico';
+import Navbar from './Navbar';
 
 export default function StudentDashboard() {
     const ref = useRef(null);
@@ -111,7 +111,7 @@ export default function StudentDashboard() {
                 <div className='col-md-4' key={index}>
                   <div className="card fade-in">
                     <div className="card-body" style={{ textAlign: 'center', border: '1px solid black' }}>
-                      <img src={`http://127.0.0.1:8000/storage/${book.coverImage}`} className="book-cover" style={{ justifyItems: 'center' }} />
+                      <img src={`http://127.0.0.1:8000/storage/${book.coverImage}`} className="book-cover"/>
                       <h4 style={{ textAlign: 'center' }} className="card-title">{book.title}</h4>
                       <p style={{ textAlign: 'center' }} className="card-text">{book.author}</p>
                       <button style={{ justifyContent: 'center' }} className="btn btn-primary" onClick={() => handleBorrow(book.id)} disabled={borrowedBooks.includes(book.id)}>
@@ -128,36 +128,33 @@ export default function StudentDashboard() {
       };
       return (
         <>
-          <LoadingBar color='#f11946' ref={ref} />
-          <Navbar title='Student Dashboard - LMS' />
-      
-          <div className="container mt-4">
-            <div className="row">
-              {user && (
-                <div className="col-md-3">
-                  <div className="card">
-                    <div className="card-header">
-                      User Information
-                    </div>
-                    <div className="card-body">
-                      <h5 className="card-title">{user.name}</h5>
-                      <p className="card-text"><strong>Email:</strong> {user.role}</p>
-                      <button className="btn btn-success mt-3" onClick={() => handleMyBorrowings(user.id)}>
-                        My Borrowings
-                      </button>
-                      <button className="btn btn-warning mt-3 ml-2 mx-2" onClick={handleLogout}>
-                        Logout
-                      </button> 
-                    </div>
-                  </div>
-                </div>
-              )}
-              <div className="col-md-9">
+          
 
-                <h3>Available Books</h3>
-                {books && generateRows(books)}
-              </div>
+          <div className="sidebar" style={{borderRight:'1px solid black'}}>
+            <div className="profile-section">
+              <img
+                src={favicon}
+                alt="Profile Picture"
+                className="profile-picture"
+              />
+              <h3 className="name">{user.name}</h3>
+              <p className="email">{user.email}</p>
+              <p className="role">{user.role}</p>
             </div>
+            <a className="active" href="/studentDashboard">
+              <i className='fa fa-home mx-2'></i>Home
+            </a>
+            <a onClick={()=>handleMyBorrowings(user.id)}><i className='fa fa-book mx-2'></i>My Borrowings</a>
+            <a href="#contact"><i className='fa fa-filter mx-2'></i>Filters</a>
+            <a onClick={handleLogout}><i className='fa fa-sign-out mx-2'></i>Logout</a>
+          </div>
+
+          <div className="content">
+          <LoadingBar color="#f11946" ref={ref} />
+          <Navbar title="Student Dashboard - Library Management System" />
+          <h3>Browse Books</h3>
+          <hr/>
+            {books && generateRows(books)}
           </div>
         </>
       );

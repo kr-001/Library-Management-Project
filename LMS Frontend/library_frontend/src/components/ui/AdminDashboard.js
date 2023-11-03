@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar'
 import {useNavigate} from "react-router-dom";
 import axios from 'axios'
+import '../../css/StudentDashboad.css'
+import '../../css/AdminDashboard.css'
+import favicon from '../ico/favicon.ico';
 
 export default function AdminDashboard() {
     const navigate = useNavigate();
@@ -36,7 +39,7 @@ export default function AdminDashboard() {
                 console.log(error);
         })
     }, []);
-    console.log(books);
+  
 
     const handleSubmit = () =>{
         console.log("BUTTON CLICKED");
@@ -78,46 +81,54 @@ export default function AdminDashboard() {
             console.log(error);
         });
     }
+   
+      
+      
     
     
-  return (
-    <>
-    <Navbar title = 'Admin Dashboard - Library Management System'/>
-        <div className='container'>
-            
+      return (
+        <>
+          
+      
+          <div className="sidebar" style={{ padding: '20px', borderRight: '1px solid black' }}>
             {user && (
-                <div className='row-cols-1' style={{padding: '20px'}}>
-                    <h3>Welcome, {user.name}</h3>
-                    <p>Role: <strong>{user.role}</strong></p>
-                    <p>Email: <strong>{user.email}</strong></p>
-                </div>
-                
+              <div className="profile-section">
+                <img src={favicon} alt="Profile Picture" className="profile-picture" />
+                <h3 className="name">{user.name}</h3>
+                <p className="email">{user.email}</p>
+                <p className="role">{user.role}</p>
+              </div>
             )}
-            <div className='row'>
-                <div className='col'>
-                    <button type="button" className='btn btn-primary' onClick={handleSubmit}>Add Book</button>
-                    <button type="button" className='btn btn-secondary' onClick={handleLogout}>Logout</button>
-                </div>
-            </div>
-            <hr/>
-            <h3>Available Books:</h3>
-            <hr/>
-            {books && books.map((book)=>(
-            <div key={book.id} className='card' style={{width: '18rem'}}>
-            <img src={`http://127.0.0.1:8000/storage/${book.coverImage}`} className="card-img-top" alt={book.title} />
-            <div className="card-body">
-                <h5 className="card-title">{book.title}</h5>
-                <p className="card-text">{book.description}</p>
-                <button type='button' className='btn btn-primary' onClick={()=>handleViewBook(book.id)}>View book</button>
-                <button type="button" className='btn btn-secondary' onClick={() => handleUpdate(book.id)}>Update Book</button>
-                <button type="button" className='btn btn-danger' onClick={() => handleDelete(book.id)}>Delete Book</button>
-            </div>
-        </div>
-        ))}
+            <hr className="horizontalLine-AdminDashboard"></hr>
+            <a onClick={handleSubmit}>Add book</a>
+            <a onClick={handleLogout}>Logout</a>
+          </div>
+      
+          <div className='content'>
+          <Navbar title="Admin Dashboard - Library Management System" />
+            {books && (
+              <ol className="list-group list-group-numbered">
+                {books.map((book, index) => (
+                  <li key={index} className="list-group-item d-flex justify-content-between align-items-start" style={{margin:'3px'}}>
+                    <div className="ms-2 me-auto">
+                      <div className="fw-bold">{book.title}</div>
+                      {book.author}
+                      <p>ISBN: {book.isbn}</p>                      
+                    </div>
 
-
-        </div>
-
-    </>
-  )
+                    <div className="button-group" style={{paddingRight:'20px'}}>
+                        <button type='button' className='btn btn-primary btn-sm mx-1' onClick={() => handleViewBook(book.id)}>View book</button>
+                        <button type="button" className='btn btn-secondary btn-sm mx-1' onClick={() => handleUpdate(book.id)}>Update Book</button>
+                        <button type="button" className='btn btn-danger btn-sm mx-1' onClick={() => handleDelete(book.id)}>Delete Book</button>
+                    </div>
+                    
+                    <span className="badge bg-primary rounded-pill">In stock: {book.quantity}</span>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </div>
+        </>
+      );      
+      
 }

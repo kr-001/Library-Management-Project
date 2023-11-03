@@ -1,4 +1,10 @@
+body{
+    background-color: #f1f1f1;
+}
+
+
 .book-cover {
+    
     width: fit-content; 
     height: 300px;
     object-fit: cover;
@@ -36,3 +42,48 @@
     0% {opacity:0;}
     100% {opacity:1;}
 }
+
+.sidebar{
+    margin: 0;
+    padding: 0;
+    width: 200px;
+    background-color: #f1f1f1;
+    position: fixed;
+    height: 100%;
+    overflow: auto;
+}
+
+.sidebar a{
+    display: block;
+    color: black;
+    padding: 16px;
+    text-decoration: none;
+}
+
+.sidebar a.active{
+    background-color: #04AA6D;
+    color: white;
+}
+
+.sidebar a:hover:not(.active){
+    background-color: #555;
+    color: white;
+}
+.content{
+    margin-left: 200px;
+    padding:1px 16px;
+    height: 1000px;
+}
+.profile-section{
+    text-align: center;
+    padding:16px;
+}
+.profile-picture {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+  }
+  .name, .email, .role {
+    margin: 0;
+    padding: 0;
+  }
