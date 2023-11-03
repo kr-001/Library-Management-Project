@@ -25,6 +25,7 @@ export default function RegisterForm() {
         axios.post('http://127.0.0.1:8000/api/register' , formData)
         .then((response)=>{
             setMessage('Successfully Registered!');
+            navigate('/login');
         })
         .catch((error)=>{
             setMessage('Error Occured, Try Again');

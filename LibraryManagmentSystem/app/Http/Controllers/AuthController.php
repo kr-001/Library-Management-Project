@@ -17,6 +17,7 @@ class AuthController extends Controller
     {
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
+    
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -87,4 +88,6 @@ class AuthController extends Controller
             'role' => auth('api')->user()->role,
         ]);
     }
+
+
 }

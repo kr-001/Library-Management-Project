@@ -23,7 +23,7 @@ class Borrower extends Model
         });
     }
     public function book(){
-       return $this->belongsTo(Book::class , 'bookId' , 'isbn');
+       return $this->belongsTo(Book::class , 'bookId' , 'id');
     }
 
 }

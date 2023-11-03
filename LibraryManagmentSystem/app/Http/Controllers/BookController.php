@@ -4,14 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Book;
+use Illuminate\Support\Facades\Log;
 
 
 class BookController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
    public function index()
    {
     $books = Book::all();
-    return view('books.index' , ['books'=>$books]);
+    return  response()->json( $books);
    }
 
    public function create(){
@@ -27,42 +32,59 @@ class BookController extends Controller
    }
 
 
-   public function edit($id){
+   public function findBookById($id){
     $book = Book::findOrFail($id);
-    return view('books.edit' , compact('book'));
+    $user = auth()->user();
+    return response()->json([$book , $user ]);
    }
 
    public function store(Request $request)
    {
-    $validatedData = $request->validate([
-        'title'=>'required|max:255',
-        'author'=>'required|max:255',
-        'isbn'=>'required|max:20',
-        'price'=>'required|max:10',
-        'quantity'=>'required|integer|min:1',
-        'cover_image' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
-    ]);
+       try {
+           $validatedData = $request->validate([
+               'title'=>'required|max:255',
+               'author'=>'required|max:255',
+               'isbn'=>'required|max:20',
+               'price'=>'required|max:10',
+               'quantity'=>'required|integer|min:1',
+               'coverImage' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
+           ]);
 
-    if($request->hasFile('cover_image'))
-    {
-        $coverImagePath = $request->file('cover_image')->store('bookCovers' , 'public');
-    }
+           if($request->hasFile('coverImage'))
+           {
+               $coverImagePath = $request->file('coverImage')->store('bookCovers' , 'public');
+               $validatedData['coverImage'] = $coverImagePath;
+           }
 
-    $book = Book::create($validatedData);
-    dd($book);
-    return redirect()->route('books.index')->with('success' , 'Book added successfully');
+           $book = Book::create($validatedData);
 
+           return response()->json([
+               'success' => true,
+               'message' => 'Book added successfully',
+               'book' => $book
+           ], 201);
+       } catch (\Exception $e) {
+           return response()->json([
+               'success' => false,
+               'message' => 'Failed to add book',
+               'error' => $e->getMessage()
+           ], 500);
+       }
    }
 
-   public function update(Request $request , $id){
+
+
+    public function update(Request $request , $id){
+        Log::info($request->all());
         $request->validate([
         'title'=>'required|max:255',
         'author'=>'required|max:255',
         'isbn'=>'required|max:255',
         'quantity'=>'required|integer|min:1',
-        'price'=>'required|numeric|min:0'
+        'price'=>'required|numeric|min:0',
+        'coverImage' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
     ]);
-   
+
     $book = Book::findOrFail($id);
 
     $book->title = $request->input('title');
@@ -70,10 +92,25 @@ class BookController extends Controller
     $book->isbn = $request->input('isbn');
     $book->quantity = $request->input('quantity');
     $book->price = $request->input('price');
+    if($request->hasFile('coverImage'))
+    {
+        $coverImagePath = $request->file('coverImage')->store('bookCovers' , 'public');
+        $book->coverImage = $coverImagePath;
+    }
 
     $book->save();
 
-    return redirect()->route('books.show' , $book->id)->with('success' , "Book Updated Successfully");
+    return response()->json('Book Updated Successfully');
 
+   }
+
+   public function delete($id){
+        $book = Book::findOrFail($id);
+        $book->delete();
+
+        return response()->json([
+            'success'=>true,
+            'message'=>"Book Deleted Successfully"
+        ],200);
    }
 }

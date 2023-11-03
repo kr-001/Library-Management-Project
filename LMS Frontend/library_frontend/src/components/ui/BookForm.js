@@ -1,14 +1,25 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import {useNavigate} from 'react-router-dom'
 import Navbar from './Navbar';
 
 function BookForm() {
+    const navigate = useNavigate();
     const [title, setTitle] = useState('');
     const [author, setAuthor] = useState('');
     const [isbn, setIsbn] = useState('');
     const [price, setPrice] = useState('');
     const [quantity, setQuantity] = useState('');
     const [coverImage, setCoverImage] = useState(null);
+
+    const resetForm = () => {
+        setTitle('');
+        setAuthor('');
+        setIsbn('');
+        setPrice('');
+        setQuantity('');
+        setCoverImage(null);
+    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -19,21 +30,22 @@ function BookForm() {
         formData.append('isbn', isbn);
         formData.append('price', price);
         formData.append('quantity', quantity);
-        formData.append('cover_image', coverImage);
+        formData.append('coverImage', coverImage);
 
         try {
-            
             const response = await axios.post('http://127.0.0.1:8000/api/storeBook', formData , {
                 headers:{
-                    Authorization : `Bearer ${token}`
+                    Authorization : `Bearer ${token}`,
                 }
             });
             console.log(response.data);
+            resetForm();
+            navigate('/adminDashboard')
+            
         } catch (error) {
             console.error(error);
         }
     };
-
     return (
         <>
         <Navbar title = 'Add a book - LMS'/>
